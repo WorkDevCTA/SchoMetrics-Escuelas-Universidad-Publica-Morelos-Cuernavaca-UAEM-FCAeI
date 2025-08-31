@@ -1,0 +1,467 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Model for users
+model User {
+  id        String   @id @default(cuid())
+  matricula String   @unique
+  name      String
+  password  String
+  role      Role     @default(USER)
+  userType  UserType @default(STUDENT)
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ====== Relations ======= //
+  profile    Profile?
+  activities Activity[]
+  rewards    Reward[]
+
+  educationalArticles   EducationalArticle[]   @relation("UserEducationalArticles")
+  articleRatings        ArticleRating[]        @relation("UserArticleRatings")
+  notifications         Notification[] // Notifications recived by the user
+  visualMaterials       VisualMaterial[]
+  visualMaterialRatings VisualMaterialRating[]
+  createdShortVideos    ShortVideo[]           @relation("UserShortVideos")
+  shortVideoRating      ShortVideoRating[]     @relation("UserShortVideoRatings")
+  announcement          Announcement[]         @relation("UserAnnouncements")
+}
+
+// enum for UserTypes
+enum UserType {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+// enum for Roles
+enum Role {
+  USER
+  ADMIN
+}
+
+// Model for password reset tokens
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+// Model Profile
+model Profile {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  bio       String?
+  city      String?
+  state     String?
+  avatarUrl String? // Save the filekey of S3 for the avatar user
+
+  // ====== Relations ======= //
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badges Badge[] @relation("ProfileBadges")
+}
+
+// enum for Activity Status
+enum ActivityStatus {
+  PENDING_REVIEW
+  REVIEWED
+  // We could add REJECTED if was required
+}
+
+// enum for Activity Types
+enum ActivityType {
+  RECYCLING
+  TREE_PLANTING
+  WATER_SAVING
+  COMPOSTING
+  ENERGY_SAVING
+  EDUCATION
+  OTHER
+}
+
+// Model For Evidences
+model Evidence {
+  id         String   @id @default(cuid())
+  activityId String
+  fileUrl    String
+  fileType   String // "image" o "video"
+  fileName   String
+  fileSize   Int
+  format     String // "jpg", "png", "mp4", etc.
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // ====== Relations ======= //
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+}
+
+// Model for Activity 
+model Activity {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  type        ActivityType
+  quantity    Float
+  unit        String
+  points      Int
+  date        DateTime
+  status      ActivityStatus @default(PENDING_REVIEW)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // ====== Relations ======= //
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evidence  Evidence[]
+  revieweds ActivityReviewed[]
+
+  // Index
+  @@index([userId])
+  @@index([status])
+}
+
+// Snapshot for ActivitiesReviewed
+model ActivityReviewed {
+  id         String   @id @default(cuid())
+  activityId String?
+  createdAt  DateTime @default(now())
+
+  // ====== Relations ======= //
+  activity Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  userId   String
+
+  // ===== Snapshot de las Actividades Revisadas ===== //
+  activityTitle    String?
+  activityDesc     String?
+  activityDate     DateTime?
+  activityPoints   Int?
+  activityQuantity Float
+  activityUnit     String?
+  activityType     ActivityType?
+  activityStatus   ActivityStatus?
+}
+
+// enum for Rewards Category
+enum RewardCategory {
+  DISCOUNT
+  WORKSHOP
+  PRODUCT
+  RECOGNITION
+  EXPERIENCE
+  OTHER
+}
+
+// Model For Rewards
+model Reward {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  pointsCost  Int
+  available   Boolean        @default(true)
+  quantity    Int?
+  expiresAt   DateTime?
+  category    RewardCategory @default(OTHER)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // ====== Relations ======= //
+  redemptions Redemption[]
+  User        User?        @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+// Model for Reward Redeemed
+model Redemption {
+  id         String   @id @default(cuid())
+  redeemedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  rewardLimitToUse DateTime
+  rewardFolio      String 
+
+
+  // ====== Relations ======= //
+  rewardId String?
+  reward   Reward? @relation(fields: [rewardId], references: [id], onDelete: SetNull)
+  userId   String
+
+  // ====== Snapshot de la recompensa canjeada ======= // 
+  rewardTitle     String?
+  rewardDesc      String?
+  rewardPoints    Int?
+  rewardQuantity  Int?
+  rewardExpiresAt DateTime?
+  rewardCategory  RewardCategory?
+  rewardCreatedAt DateTime?
+}
+
+
+// Model for Badge
+model Badge {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String
+  criteria    String
+
+  // ====== Relations ======= //
+  profiles Profile[] @relation("ProfileBadges")
+}
+
+// Model For Notifications
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+
+  // ====== Relations ======= //
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// =========================== Section for Educatio ================================== //
+// ====== Model & Relations for Articles ========= //
+
+// enum for Article Topics
+enum ArticleTopic {
+  REDUCCION_RESIDUOS
+  AHORRO_RECURSOS
+  CONSUMO_RESPONSABLE
+  BIODIVERSIDAD
+  HUERTOS_URBANOS
+  MOVILIDAD_SOSTENIBLE
+  CAMBIO_CLIMATICO
+  OTRO
+}
+
+// Model for Education Articles
+model EducationalArticle {
+  id                String       @id @default(cuid())
+  title             String
+  content           String
+  topic             ArticleTopic
+  authorName        String
+  authorInstitution String       @default("Facultad de Contaduría, Administración e Informática - UAEM")
+  authorInfo        String? // Additional information about the author (optional)
+  coverImageUrl     String? // URL thumnail (optional)
+
+  // ====== Relations ======= //
+  userId  String // ID of the user who created the article
+  user    User            @relation("UserEducationalArticles", fields: [userId], references: [id], onDelete: Cascade) // Relation with the User creator
+  ratings ArticleRating[] // Realtion ratings
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([topic])
+}
+
+// Model for Article Ratings
+model ArticleRating {
+  id    String  @id @default(cuid())
+  liked Boolean // true for "Like", false for "Dislike"
+
+  // ====== Relations ======= //
+  articleId String
+  article   EducationalArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User               @relation("UserArticleRatings", fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, articleId]) // A user can only rate an article once
+  @@index([articleId])
+  @@index([userId])
+}
+
+// ====== Model & Relations for Visual Materials ========= //
+
+// enum for Visual Materials Topics
+enum VisualMaterialTopic {
+  INFOGRAFIA
+  VIDEO_TUTORIAL
+  PRESENTACION
+  GALERIA_IMAGENES
+  GUIA_VISUAL_RAPIDA
+  ECO_RETO_VISUAL
+  OTRO
+}
+
+// Model for Visual Materials
+model VisualMaterial {
+  id                String              @id @default(cuid())
+  title             String
+  description       String?
+  topic             VisualMaterialTopic // Nuevo enum para temas
+  authorName        String
+  authorInstitution String              @default("Facultad de Contaduría, Administración e Informática - UAEM")
+  authorInfo        String? // Para información más larga
+  userId            String // ID del User que lo creó
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  images  VisualMaterialImage[] // Relación uno-a-muchos con las imágenes
+  ratings VisualMaterialRating[] // Relación uno-a-muchos con las valoraciones
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([topic])
+}
+
+// Model for Visual Material Images
+model VisualMaterialImage {
+  id               String         @id @default(cuid())
+  s3Key            String // La clave del archivo en S3
+  order            Int // Para mantener el orden de las imágenes
+  visualMaterialId String
+  visualMaterial   VisualMaterial @relation(fields: [visualMaterialId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([visualMaterialId])
+}
+
+// Model for Visual Material Ratings
+model VisualMaterialRating {
+  id               String         @id @default(cuid())
+  liked            Boolean // true para "Me gusta", false para "No me gusta"
+  visualMaterialId String
+  visualMaterial   VisualMaterial @relation(fields: [visualMaterialId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, visualMaterialId]) // Un usuario solo puede valorar una vez
+  @@index([visualMaterialId])
+  @@index([userId])
+}
+
+// ====== Model & Relations for Short Videos ========= //
+
+// enum for Video Topics
+enum VideoTopic {
+  TUTORIAL_PRACTICO
+  CONSEJO_RAPIDO
+  DEMOSTRACION_PROYECTO
+  ENTREVISTA_EXPERTO
+  ANIMACION_EXPLICATIVA
+  ECO_NOTICIA_BREVE
+  OTRO
+}
+
+// Model for Short Videos
+model ShortVideo {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  videoS3Key       String? // Clave del archivo de video en S3, ahora opcional
+  externalVideoUrl String? // Nueva URL para videos externos
+  // Podríamos añadir un enum VideoSourceType { S3, EXTERNAL_URL } si queremos ser más explícitos
+
+  thumbnailS3Key    String?
+  duration          Int?
+  topic             VideoTopic
+  authorName        String
+  authorInstitution String     @default("Facultad de Contaduría, Administración e Informática - UAEM")
+  authorInfo        String?
+  userId            String
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserShortVideos")
+
+  ratings ShortVideoRating[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Podríamos añadir una restricción a nivel de base de datos para asegurar que al menos uno de videoS3Key o externalVideoUrl esté presente.
+  // @@check(COALESCE(videoS3Key, externalVideoUrl) IS NOT NULL) // Ejemplo de restricción (la sintaxis puede variar según la DB)
+
+  @@index([userId])
+  @@index([topic])
+}
+
+// Model for Short Video Ratings
+model ShortVideoRating {
+  id           String     @id @default(cuid())
+  liked        Boolean
+  shortVideoId String
+  shortVideo   ShortVideo @relation(fields: [shortVideoId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserShortVideoRatings")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, shortVideoId])
+  @@index([shortVideoId])
+  @@index([userId])
+}
+
+// ====== Model & Relations for Announcements ========= //
+
+// Topics for Announcements
+enum AnnouncementTopic {
+  AVISO_SCHOMETRICS
+  AVISO_ESCOLAR
+  AVISO_AMBIENTAL
+  AVISO_GENERAL
+  AVISO_ACTUALIZACION
+}
+
+// Model for Annoucements
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic AnnouncementTopic
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAnnouncements")
+
+  @@index([topic])
+}
+
+// Validate User Section
+
+model ValidationToken {
+  // Model for validate user tokens
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@map("validation_tokens_user")
+}
