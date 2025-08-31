@@ -17,11 +17,9 @@ export const VisualAnimateModelImages = () => {
   };
 
   const images = [
-    "https://img.freepik.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740&q=80",
-    "https://schometrics.s3.us-east-2.amazonaws.com/schometrics-for-schools/morelos/cuernavaca/publica/escuela-secundaria-general-99/ADMIN/00000000/visual-material-images/Test%2011/dd8b1257-aa52-4914-8a0c-94be62eac1d4.webp",
-    "/logo.png",
-    "/logo.png",
-    "/logo.png",
+    "/schometrics.png",
+    "/schometrics.png",
+    "/schometrics.png",
   ];
 
   return (
