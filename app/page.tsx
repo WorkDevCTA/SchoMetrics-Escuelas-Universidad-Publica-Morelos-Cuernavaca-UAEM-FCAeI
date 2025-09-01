@@ -98,12 +98,12 @@ export default function Home() {
                     className="animate-heartbeat"
                   />
                 </div>
-                <div className="space-y-4 lg:mx-10">
+                <div className="lg:mx-8">
                   <div className="mx-auto max-w-full">
-                    <h2 className="text-baseColor text-2xl lg:text-5xl font-bold">
+                    <h2 className="text-baseColor text-4xl lg:text-6xl font-bold">
                       Facultad de Contaduría, Administración e Informática
                     </h2>
-                    <p className="text-baseSecondColor text-xl lg:text-4xl font-semibold">
+                    <p className="text-baseSecondColor text-lg lg:text-2xl font-semibold italic">
                       Por una Facultad innovadora creando un futuro sostenible
                     </p>
                   </div>
