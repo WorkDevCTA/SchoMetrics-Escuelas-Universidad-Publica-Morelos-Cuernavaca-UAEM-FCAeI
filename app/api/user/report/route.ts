@@ -10,7 +10,8 @@ export interface UserReportData {
   user: {
     id: string;
     name: string | null;
-    matricula: string | null;
+    matricula: string;
+    licenciatura: string;
     totalPoints: number;
     memberSince: string;
     accountType: string;
@@ -93,7 +94,7 @@ export async function GET() {
     if (!userData) {
       return new NextResponse(
         JSON.stringify({ message: "Usuario no encontrado" }),
-        { status: 404, headers: { "Content-Type": "application/json" } },
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
     const userRedemptions = await prisma.redemption.findMany({
@@ -103,7 +104,7 @@ export async function GET() {
     });
 
     const reviewedActivities = userData.activities.filter(
-      (activity) => activity.status === "REVIEWED",
+      (activity) => activity.status === "REVIEWED"
     );
     let co2Saved = 0;
     let waterSaved = 0;
@@ -141,7 +142,7 @@ export async function GET() {
         ([name, data]) => ({
           name,
           ...data,
-        }),
+        })
       ),
       // Añadimos los campos que requiere la interfaz StatsData aunque no se usen en el PDF
       totalPoints: reviewedActivities.reduce((sum, act) => sum + act.points, 0),
@@ -162,6 +163,7 @@ export async function GET() {
       id: userData.id,
       name: userData.name,
       matricula: userData.matricula,
+      licenciatura: userData.licenciatura,
       totalPoints: userData.points,
       memberSince: userData.createdAt.toLocaleDateString("es-MX"),
       accountType: userData.role,
@@ -182,7 +184,7 @@ export async function GET() {
     console.error("Error al generar el reporte:", error);
     return new NextResponse(
       JSON.stringify({ message: "Error interno del servidor" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

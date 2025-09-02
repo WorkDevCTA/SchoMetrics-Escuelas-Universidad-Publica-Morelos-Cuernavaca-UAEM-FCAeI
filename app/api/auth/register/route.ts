@@ -5,13 +5,13 @@ import bcrypt from "bcryptjs";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, matricula, password, userType } = body;
+    const { name, matricula, licenciatura, password, userType } = body;
 
     // Validate data
-    if (!name || !matricula || !password) {
+    if (!name || !matricula || !licenciatura || !password) {
       return NextResponse.json(
         { error: "Faltan campos requeridos" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       return NextResponse.json(
         { error: "La matricula ya está registrada" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         matricula,
+        licenciatura,
         password: hashedPassword,
         userType: userType || "STUDENT",
       },
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Crear un perfil básico para el usuario
     await prisma.profile.create({
       data: {
-        email: `cambiarestecorreo@${user.id.slice(0, 10)}.com`,
+        email: `cambiarestecorreo@${user.id}.com`,
         bio: "Añade una descripción personal",
         userId: user.id,
       },
@@ -54,13 +55,13 @@ export async function POST(request: NextRequest) {
         message: "Usuario registrado exitosamente",
         userId: user.id,
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error al registrar usuario:", error);
     return NextResponse.json(
       { error: "Error al registrar usuario" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

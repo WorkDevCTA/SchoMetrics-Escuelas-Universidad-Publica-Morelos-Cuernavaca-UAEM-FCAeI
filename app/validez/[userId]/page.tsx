@@ -241,6 +241,29 @@ const ValidezPage = () => {
                       {user?.matricula}
                     </p>
                   </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Licenciatura
+                    </label>
+                    <p className="text-lg font-bold text-sky-800">
+                      {user?.licenciatura === "CONTADOR_PUBLICO"
+                        ? "CONTADOR PÚBLICO"
+                        : user?.licenciatura === "ADMINISTRACION"
+                          ? "ADMINISTRACIÓN"
+                          : user?.licenciatura === "INFORMATICA"
+                            ? "INFORMÁTICA"
+                            : user?.licenciatura === "ADMINISTRACION_PUBLICA"
+                              ? "ADMINISTRACIÓN PÚBLICA"
+                              : user?.licenciatura === "ECONOMIA"
+                                ? "ECONOMÍA"
+                                : user?.licenciatura === "ADMINISTRACION_POLITICAS_PUBLICAS"
+                                  ? "ADMINISTRACIÓN Y POLÍTICAS PÚBLICAS"
+                                  : user?.licenciatura === "NO_APLICA"
+                                    ? "NO APLICA"
+                                    : "NO APLICA"
+                      }
+                    </p>
+                  </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-500">

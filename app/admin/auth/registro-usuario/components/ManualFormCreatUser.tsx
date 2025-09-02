@@ -11,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Licenciatura } from "@prisma/client";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +25,7 @@ const ManualFormCreateUser = () => {
   const [formData, setFormData] = useState({
     name: "",
     matricula: "",
+    licenciatura: "",
     password: "",
     confirmPassword: "",
     userType: "STUDENT",
@@ -48,6 +51,13 @@ const ManualFormCreateUser = () => {
 
   const handleUserTypeChange = (value: string) => {
     setFormData((prev) => ({ ...prev, userType: value }));
+  };
+
+  const handleLicenciaturaChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      licenciatura: value as any,
+    }));
   };
 
   const togglePasswordVisibility = () => {
@@ -100,6 +110,7 @@ const ManualFormCreateUser = () => {
         body: JSON.stringify({
           name: formData.name,
           matricula: formData.matricula,
+          licenciatura: formData.licenciatura,
           password: formData.password,
           userType: formData.userType,
         }),
@@ -118,6 +129,7 @@ const ManualFormCreateUser = () => {
 
         formData.name = "";
         formData.matricula = "";
+        formData.licenciatura = "NO_APLICA";
         formData.password = "";
         formData.confirmPassword = "";
         formData.userType = "STUDENT";
@@ -131,6 +143,10 @@ const ManualFormCreateUser = () => {
       setIsLoading(false);
     }
   };
+
+  const LicenciaturasArray = Object.values(Licenciatura);
+
+
   return (
     <Card className="w-auto">
       <CardHeader className="space-y-1">
@@ -194,6 +210,41 @@ const ManualFormCreateUser = () => {
             {matriculaError && (
               <p className="text-sm text-red-500">{matriculaError}</p>
             )}
+          </div>
+          {/* Licenciatura */}
+          <div className="space-y-1">
+            <Label htmlFor="licenciatura">
+              Licenciatura <span className="text-red-500">*</span>
+            </Label>
+            <Select
+              value={formData.licenciatura}
+              onValueChange={handleLicenciaturaChange}
+              name="licenciatura"
+              disabled={isLoading}
+            >
+              <SelectTrigger
+                id="licenciatura"
+              >
+                <SelectValue placeholder="Selecciona una Licenciatura" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Licenciaturas</SelectLabel>
+                  {LicenciaturasArray.map((licenciaturaValue) => (
+                    <SelectItem key={licenciaturaValue} value={licenciaturaValue}>
+                      {licenciaturaValue
+                        .replace(/_/g, " ")
+                        .charAt(0)
+                        .toUpperCase() +
+                        licenciaturaValue
+                          .replace(/_/g, " ")
+                          .slice(1)
+                          .toLowerCase()}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="relative grid gap-2">
             <Label htmlFor="password">Contraseña</Label>

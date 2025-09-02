@@ -8,6 +8,7 @@ interface ScoreUser {
   id: string;
   name: string;
   matricula: string;
+  licenciatura: string;
   userType: string;
   avatarUrl?: string | null; // This will be the signed URL
   totalActivities: number;
@@ -54,6 +55,7 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         matricula: true,
+        licenciatura: true,
         userType: true,
         points: true,
         createdAt: true,
@@ -86,7 +88,7 @@ export async function GET(request: NextRequest) {
           } catch (e) {
             console.error(
               `Error al generar URL firmada para ${user.profile.avatarUrl}:`,
-              e,
+              e
             );
             // Mantener signedAvatarUrl como null si falla la generación
           }
@@ -95,13 +97,14 @@ export async function GET(request: NextRequest) {
           id: user.id,
           name: user.name,
           matricula: user.matricula,
+          licenciatura: user.licenciatura,
           userType: user.userType,
           avatarUrl: signedAvatarUrl,
           totalActivities: user._count.activities,
           totalPoints: user.points,
           memberSince: user.createdAt.toISOString(),
         };
-      }),
+      })
     );
 
     return NextResponse.json({
@@ -122,12 +125,12 @@ export async function GET(request: NextRequest) {
           error: "Error de validación de Prisma al obtener los scores.",
           details: error.toString(),
         },
-        { status: 400 }, // Bad Request podría ser más apropiado para errores de validación
+        { status: 400 } // Bad Request podría ser más apropiado para errores de validación
       );
     }
     return NextResponse.json(
       { error: "Error interno del servidor al obtener los scores." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

@@ -279,7 +279,7 @@ export default function MiCarnet() {
           </span>
           <AnimatedModalCarnet />
         </div>
-        <Card className="relative h-[565px] w-80 overflow-hidden rounded-b-none rounded-t-lg border-0 bg-white shadow-2xl backdrop-blur-sm">
+        <Card className="relative h-[600px] w-80 overflow-hidden rounded-b-none rounded-t-lg border-0 bg-white shadow-2xl backdrop-blur-sm">
           <div className="relative z-10 bg-gradient-to-r from-baseColor via-baseColor/50 to-baseColor p-4">
             <div className="flex w-full justify-center">
               <div className="h-[25px] w-[25px] rounded-full border border-baseColor bg-slate-950"></div>
@@ -329,6 +329,29 @@ export default function MiCarnet() {
               <div className="flex items-center justify-center gap-2">
                 <span className="text-lg text-baseColor">
                   Matricula: <b>{profile?.matricula}</b>
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-2 my-2">
+                <span className="text-xs text-baseColor">
+                  Licenciatura: {" "}
+                  <b>
+                    {profile?.licenciatura === "CONTADOR_PUBLICO"
+                      ? "CONTADOR PÚBLICO"
+                      : profile?.licenciatura === "ADMINISTRACION"
+                        ? "ADMINISTRACIÓN"
+                        : profile?.licenciatura === "INFORMATICA"
+                          ? "INFORMÁTICA"
+                          : profile?.licenciatura === "ADMINISTRACION_PUBLICA"
+                            ? "ADMINISTRACIÓN PÚBLICA"
+                            : profile?.licenciatura === "ECONOMIA"
+                              ? "ECONOMÍA"
+                              : profile?.licenciatura === "ADMINISTRACION_POLITICAS_PUBLICAS"
+                                ? "ADMINISTRACIÓN Y POLÍTICAS PÚBLICAS"
+                                : profile?.licenciatura === "NO_APLICA"
+                                  ? "NO APLICA"
+                                  : "NO APLICA"
+                    }
+                  </b>
                 </span>
               </div>
             </div>

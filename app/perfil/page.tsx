@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Loader2, // Added Bell, CheckCircle, MailOpen
   MSquareIcon,
+  GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -555,6 +556,28 @@ export default function ProfilePage() {
                   <MSquareIcon className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Matricula:</span>
                   <span>{profile.matricula}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Licenciatura:</span>
+                  <span>
+                    {profile.licenciatura === "CONTADOR_PUBLICO"
+                      ? "CONTADOR PÚBLICO"
+                      : profile.licenciatura === "ADMINISTRACION"
+                        ? "ADMINISTRACIÓN"
+                        : profile.licenciatura === "INFORMATICA"
+                          ? "INFORMÁTICA"
+                          : profile.licenciatura === "ADMINISTRACION_PUBLICA"
+                            ? "ADMINISTRACIÓN PÚBLICA"
+                            : profile.licenciatura === "ECONOMIA"
+                              ? "ECONOMÍA"
+                              : profile.licenciatura === "ADMINISTRACION_POLITICAS_PUBLICAS"
+                                ? "ADMINISTRACIÓN Y POLÍTICAS PÚBLICAS"
+                                : profile.licenciatura === "NO_APLICA"
+                                  ? "NO APLICA"
+                                  : "NO APLICA"
+                    }
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />

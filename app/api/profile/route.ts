@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "Usuario no encontrado" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       publicAvatarDisplayUrl = getPublicSupabaseUrl(user.profile.avatarUrl);
       if (!publicAvatarDisplayUrl) {
         console.warn(
-          "No se pudieron construir las URLs públicas de S3 para el avatar del perfil. Verifica las variables de entorno AWS_BUCKET_NAME y AWS_REGION.",
+          "No se pudieron construir las URLs públicas de S3 para el avatar del perfil. Verifica las variables de entorno AWS_BUCKET_NAME y AWS_REGION."
         );
       }
     }
@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
       id: user.id,
       name: user.name,
       matricula: user.matricula,
+      licenciatura: user.licenciatura,
       role: user.role,
       userType: user.userType,
       points: user.points,
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
     console.error("Error al obtener perfil:", error);
     return NextResponse.json(
       { error: "Error al obtener perfil" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -100,14 +101,14 @@ export async function PUT(request: NextRequest) {
     if (!name) {
       return NextResponse.json(
         { error: "El nombre es requerido" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (!email) {
       return NextResponse.json(
         { error: "El correo es requerido" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -119,7 +120,7 @@ export async function PUT(request: NextRequest) {
     if (!currentUser) {
       return NextResponse.json(
         { error: "Usuario no encontrado" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -134,7 +135,7 @@ export async function PUT(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "El correo electrónico ya está registrado en otro usuario" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest) {
       if (!validation.valid) {
         return NextResponse.json(
           { error: validation.error || "Archivo de avatar inválido" },
-          { status: 400 },
+          { status: 400 }
         );
       }
 
@@ -166,7 +167,7 @@ export async function PUT(request: NextRequest) {
         avatarFile.name,
         "image/jpeg",
         currentUser.userType,
-        currentUser.matricula,
+        currentUser.matricula
       ); // Usa la función de s3-service
       newAvatarFileKey = s3Response.fileKey; // uploadAvatarToS3 devuelve fileKey
     }
@@ -206,11 +207,11 @@ export async function PUT(request: NextRequest) {
     let publicAvatarDisplayUrl: string | null = null;
     if (updatedUser.profile?.avatarUrl) {
       publicAvatarDisplayUrl = getPublicSupabaseUrl(
-        updatedUser.profile.avatarUrl,
+        updatedUser.profile.avatarUrl
       );
       if (!publicAvatarDisplayUrl) {
         console.warn(
-          "No se pudieron construir las URLs públicas de S3 para el avatar del perfil. Verifica las variables de entorno AWS_BUCKET_NAME y AWS_REGION.",
+          "No se pudieron construir las URLs públicas de S3 para el avatar del perfil. Verifica las variables de entorno AWS_BUCKET_NAME y AWS_REGION."
         );
       }
     }
@@ -246,7 +247,7 @@ export async function PUT(request: NextRequest) {
         : "Error desconocido al actualizar perfil";
     return NextResponse.json(
       { error: "Error al actualizar perfil: " + errorMessage },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -268,18 +269,18 @@ export async function DELETE(req: Request) {
     if (!currentUser) {
       return NextResponse.json(
         { error: "Usuario no encontrado" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
     await prisma.$transaction(async (tx) => {
       // Paso 2.1: Eliminar la carpeta y su contenido de AWS S3
       console.log(
-        `Iniciando la eliminación de datos en S3 para el usuario: ${currentUser.matricula}`,
+        `Iniciando la eliminación de datos en S3 para el usuario: ${currentUser.matricula}`
       );
       await deleteUserFolderFromSupabase(
         currentUser.userType,
-        currentUser.matricula,
+        currentUser.matricula
       );
     });
 
@@ -304,7 +305,7 @@ export async function DELETE(req: Request) {
     console.error("Error al eliminar la cuenta:", error);
     return NextResponse.json(
       { error: "Error interno del servidor al eliminar la cuenta" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

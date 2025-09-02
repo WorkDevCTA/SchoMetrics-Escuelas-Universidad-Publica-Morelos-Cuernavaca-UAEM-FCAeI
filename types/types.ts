@@ -81,6 +81,7 @@ export interface UserProfileBadge {
 export interface UserProfileData {
   id: string;
   matricula: string;
+  licenciatura: string;
   name: string;
   role: string;
   userType: string;

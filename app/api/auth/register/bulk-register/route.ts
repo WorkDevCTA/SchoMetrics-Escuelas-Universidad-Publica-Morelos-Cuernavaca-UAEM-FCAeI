@@ -25,6 +25,7 @@ export async function POST(request: Request) {
         data: {
           name: user.name,
           matricula: user.matricula,
+          licenciatura: user.licenciatura,
           password: hashedPassword,
           userType: user.userType || "STUDENT",
         },
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
 
       await prisma.profile.create({
         data: {
-          email: `cambiarestecorreo@${newUser.id.slice(0, 10)}.com`,
+          email: `cambiarestecorreo@${newUser.id}.com`,
           bio: "Añade una descripción personal",
           userId: newUser.id,
         },
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
     console.error("Error en registro masivo:", error);
     return NextResponse.json(
       { error: "Error en el servidor" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

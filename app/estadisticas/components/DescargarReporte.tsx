@@ -74,6 +74,9 @@ export const ReportDownloadButton = () => {
     // doc.text(`Nivel Actual: ${data.user.level}`, 105, y)
     y += 7;
     doc.text(`Matricula: ${data.user.matricula}`, 14, y);
+    y += 7;
+    doc.text(`Licenciatura: ${data.user.licenciatura}`, 14, y);
+    y += 7;
     doc.text(`EcoPoints Totales: ${data.user.totalPoints}`, 105, y);
     y += 7;
     doc.text(`Miembro Desde: ${data.user.memberSince}`, 14, y);

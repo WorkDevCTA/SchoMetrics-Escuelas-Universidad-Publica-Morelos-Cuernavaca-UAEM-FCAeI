@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     console.error("Error al validar matrículas:", error);
     return NextResponse.json(
       { error: "Error en el servidor" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
