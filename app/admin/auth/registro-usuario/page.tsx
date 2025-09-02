@@ -10,6 +10,7 @@ import { FloatingNavAdmin } from "../../components/FloatingNavAdmin";
 import { BulkUserUploader } from "./components/BulkUserUploader";
 import ManualFormCreateUser from "./components/ManualFormCreatUser";
 import ExampleFilesDownloadable from "./components/ExampleFilesDownloadable";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const exampleDataListStudent = [
@@ -78,7 +79,7 @@ export default function RegisterPage() {
           Carga Masiva de Nuevos Usuario
         </h1>
         <span className="text-balance text-center text-xl text-blue-500">
-          Pudes cargar achivos tipo <b>[ .csv, .xlsx, .xls ]</b>
+          Pudes cargar achivos tipo <b>[ .xlsx, .xls ]</b>
         </span>
 
         <BulkUserUploader />
@@ -96,123 +97,73 @@ export default function RegisterPage() {
             la estructura de los datos sea de la siguiente manera:{" "}
           </h2>
           <div className="w-full">
-            <div className="my-5 overflow-x-auto rounded-sm bg-gray-800">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-center text-slate-100">
-                      name
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      matricula
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      password
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      confirmPassword
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      userType
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {exampleDataListStudent.map((data, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="text-center text-slate-100">
-                        {data.name}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.matricula}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.password}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.confirmPassword}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.userType}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="my-4">
+              <h2 className="rounded-md bg-white px-3 py-1 text-start font-semibold text-green-500 shadow-md w-max">
+                Para registrar una gran cantidad de Alumnos:
+              </h2>
+              <h2 className="mt-2 rounded-md bg-white px-3 py-1 text-start font-normal text-slate-500 shadow-md w-full">
+                <b className="text-rose-700">
+                  Consideraciones importantes:
+                </b>
+                <br />
+                <b>
+                  • Conservar el nombre original de las cabeceras de tablas: "name", "matricula", "licenciatura", "password", "confirmPassword", "userType".
+                </b>
+                <br />
+                <b>
+                  • Las Licenciaturas desponibles deberán ser escritas única y exactamente de la siguiente manera (Sin acentos, espacios, ni mínusculas):
+                </b>
+                <br />
+                CONTADOR_PUBLICO
+                <br />
+                ADMINISTRACION
+                <br />
+                INFORMATICA
+                <br />
+                ADMINISTRACION_PUBLICA
+                <br />
+                ECONOMIA
+                <br />
+                ADMINISTRACION_POLITICAS_PUBLICAS
+                <br />
+                <b>
+                  • El tipo de usuario (userType) para Estudiantes derá ser escrito de la siguiente manera:
+                </b>
+                <br />
+                STUDENT
+              </h2>
+              <Image src="/alumnos.png" alt="" width={1000} height={1000} priority className="my-2" />
             </div>
-            <div className="my-5 w-full overflow-x-auto rounded-sm bg-gray-800">
-              <Table className="my-5">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-center text-slate-100">
-                      name
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      matricula
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      password
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      confirmPassword
-                    </TableHead>
-                    <TableHead className="text-center text-slate-100">
-                      userType
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {exampleDataListTeacher.map((data, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="text-center text-slate-100">
-                        {data.name}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.matricula}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.password}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.confirmPassword}
-                      </TableCell>
-                      <TableCell className="text-center text-slate-100">
-                        {data.userType}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="my-4">
+              <h2 className="rounded-md bg-white px-3 py-1 text-start font-semibold text-blue-500 shadow-md w-max">
+                Para registrar una gran cantidad de Docentes:
+              </h2>
+              <h2 className="mt-2 rounded-md bg-white px-3 py-1 text-start font-normal text-slate-500 shadow-md w-full">
+                <b className="text-rose-700">
+                  Consideraciones importantes:
+                </b>
+                <br />
+                <b>
+                  • Conservar el nombre original de las cabeceras de tablas: "name", "matricula", "licenciatura", "password", "confirmPassword", "userType".
+                </b>
+                <br />
+                <b>
+                  • En el apartado "licenciatura" para Docentes, el único valor válido aceptado será:
+                </b>
+                <br />
+                NO_APLICA
+                <br />
+                <b>
+                  • El tipo de usuario (userType) para Docentes deberá ser escrito de la siguiente manera:
+                </b>
+                <br />
+                TEACHER
+              </h2>
+              <Image src="/docentes.png" alt="" width={1000} height={1000} priority className="my-2" />
             </div>
-          </div>
-        </div>
-        <div className="flex w-full flex-col items-center justify-center text-center">
-          <h2 className="rounded-md bg-white px-3 py-1 text-start font-semibold text-red-500 shadow-md">
-            En archivos [.csv (Comma Separated Values) ]. Para una correcta
-            aceptación del archivo y el correcto procesamiento en la Base de
-            datos, es obligatorio que la estructura de los datos sea de la
-            siguiente manera:{" "}
-          </h2>
-          <div className="mt-5 flex w-full flex-col items-start justify-center overflow-auto rounded-sm bg-gray-800 p-2 text-slate-100">
-            <span className="text-start font-semibold">
-              name,matricula,password,confirmPassword,userType
-            </span>
-            <span className="text-start">
-              MARCO
-              ANTONIO,20250001,EcoPassGeneracion2025,EcoPassGeneracion2025,STUDENT
-            </span>
-            <span className="text-start">
-              JOSÉ
-              LÓPEZ,20250002,EcoPassGeneracion2025,EcoPassGeneracion2025,STUDENT
-            </span>
-            <span className="text-start">
-              LUCÍA
-              RAMÍREZ,20250003,EcoPassGeneracion2025,EcoPassGeneracion2025,STUDENT
-            </span>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

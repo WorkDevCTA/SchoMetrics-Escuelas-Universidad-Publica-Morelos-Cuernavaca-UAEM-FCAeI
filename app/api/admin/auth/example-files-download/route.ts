@@ -3,10 +3,7 @@ import { supabaseClient } from "@/types/types-supabase-service";
 
 export async function GET(req: NextRequest) {
   const bucketName = "schometrics-for-schools-uaem-fcaei-cuernavaca-morelos";
-  const archivos = [
-    "csv-archivo-valido-ejemplo.csv",
-    "xlsx-archivo-valido-ejemplo.xlsx",
-  ];
+  const archivos = ["xlsx-archivo-valido-ejemplo.xlsx"];
 
   try {
     const urls = await Promise.all(
